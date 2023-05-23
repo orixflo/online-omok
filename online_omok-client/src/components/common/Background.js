@@ -4,6 +4,7 @@ import logoIconSmall from '../../asset/img/icon_01_small.png'
 import Button from "./Button";
 import DividerVertical from "./DividerVertical";
 import SpacerHorizontal from "./SpacerHorizontal";
+import { colorConvex, colorConcave } from "../../styles/colors";
 
 const BackgroundWrapper = styled.div`
     position: absolute;
@@ -25,21 +26,7 @@ const Taskbar = styled.div`
     margin-bottom: 6px;
     display: flex;
     background: #C0C0C0;
-    box-shadow:
-        // Internal frame
-        -3px -3px #FFFFFF,
-        -3px 0px #FFFFFF,
-        0px -3px #FFFFFF,
-        3px 3px #808080,
-        3px -3px #808080,
-        -3px 3px #808080,
-        // External frame
-        -6px -6px #DFDFDF,
-        -6px 3px #DFDFDF,
-        3px -6px #DFDFDF,
-        6px 6px #000000,
-        6px -6px #000000,
-        -6px 6px #000000;
+    box-shadow: ${colorConvex[1]};
 `;
 
 const Icon = styled.div`
@@ -52,15 +39,9 @@ const Icon = styled.div`
 `;
 
 const Online5mokIcon = styled.img`
-    ${props => props.size === 'large' ?
-        `
-        width: 50px;
-        height: 50px;
-        ` :
-        `
-        width: 20px;
-        height: 20px;
-        `
+    ${props => props.size === 'large' ? 
+        `width: 50px; height: 50px;` :
+        `width: 20px; height: 20px;`
     }
 `;
 
@@ -75,22 +56,8 @@ const ActivedButton = styled.div`
     font-size: 1rem;
     display: flex;
     background: #E3E6E7;
-    ${(props) => props.width ? `width: ${props.width}` : ''};
-    box-shadow:
-        // Internal frame
-        -2px -2px #000000,
-        -2px 0px #000000,
-        0px -2px #000000,
-        2px 2px #DFDFDF,
-        2px -2px #DFDFDF,
-        -2px 2px #DFDFDF,
-        // External frame
-        -4px -4px #808080,
-        -4px 2px #808080,
-        2px -4px #808080,
-        4px 4px #FFFFFF,
-        4px -4px #FFFFFF,
-        -4px 4px #FFFFFF;
+    ${(props) => props.width && `width: ${props.width}`};
+    box-shadow: ${colorConcave[0]};
 `;
 
 

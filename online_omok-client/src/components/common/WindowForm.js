@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Button from './Button';
 import logoIcon from '../../asset/img/icon_01_small.png'
+import { colorConvex } from '../../styles/colors';
 
 const WindowFormWrapper = styled.div`
     font-family: 'DungGeunMo';
@@ -9,21 +10,7 @@ const WindowFormWrapper = styled.div`
     display: flex;
     flex-direction: column;
     background: #C0C0C0;
-    box-shadow:
-        // Internal frame
-        -3px -3px #FFFFFF,
-        -3px 0px #FFFFFF,
-        0px -3px #FFFFFF,
-        3px 3px #808080,
-        3px -3px #808080,
-        -3px 3px #808080,
-        // External frame
-        -6px -6px #DFDFDF,
-        -6px 3px #DFDFDF,
-        3px -6px #DFDFDF,
-        6px 6px #000000,
-        6px -6px #000000,
-        -6px 6px #000000;
+    box-shadow: ${colorConvex[1]};
 `;
 
 const WindowFormHeader = styled.div`

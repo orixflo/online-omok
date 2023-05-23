@@ -7,7 +7,7 @@ const StyledTabButton = styled.button`
     border: 0px;
     margin: 4px;
     background: #C0C0C0;
-    ${props => props.width ? `width: ${props.width}` : ''};
+    ${props => props.width && `width: ${props.width}`};
 
     ${props => props.activated ? `
         box-shadow:
