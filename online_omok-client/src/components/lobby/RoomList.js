@@ -17,7 +17,6 @@ const RoomListWrapper = styled.div`
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
     }
-
     &::-webkit-scrollbar {
         margin: 100px;
         width: 30px;
@@ -44,7 +43,6 @@ const RoomListWrapper = styled.div`
         background-size: 22px;
         background-clip: padding-box;
         box-shadow: ${colorScrollBtnOff};
-
         &:active {
             box-shadow: ${colorScrollBtnOn};
         }
@@ -59,14 +57,11 @@ const RoomListWrapper = styled.div`
         background-size: 22px;
         background-clip: padding-box;
         box-shadow: ${colorScrollBtnOff};
-
         &:active {
             box-shadow: ${colorScrollBtnOn};
         }
     }
 `;
-
-
 
 const RoomList = () => {
     return (
@@ -79,7 +74,6 @@ const RoomList = () => {
             <Room />
             <Room />
             <Room />
-            
         </RoomListWrapper>
     );
 };
