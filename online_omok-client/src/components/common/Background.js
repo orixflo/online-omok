@@ -1,10 +1,10 @@
-import styled from "styled-components"
-import logoIconLarge from '../../asset/img/icon_01_large.png'
-import logoIconSmall from '../../asset/img/icon_01_small.png'
-import Button from "./Button";
-import DividerVertical from "./DividerVertical";
-import SpacerHorizontal from "./SpacerHorizontal";
-import { colorConvex, colorConcave } from "../../styles/colors";
+import styled from 'styled-components';
+import logoIconLarge from '../../asset/img/icon_01_large.png';
+import logoIconSmall from '../../asset/img/icon_01_small.png';
+import Button from './Button';
+import DividerVertical from './DividerVertical';
+import SpacerHorizontal from './SpacerHorizontal';
+import { colorConvex, colorConcave } from '../../styles/colors';
 
 const BackgroundWrapper = styled.div`
     position: absolute;
@@ -25,7 +25,7 @@ const Taskbar = styled.div`
     height: 32px;
     margin-bottom: 6px;
     display: flex;
-    background: #C0C0C0;
+    background: #c0c0c0;
     box-shadow: ${colorConvex[1]};
 `;
 
@@ -39,10 +39,7 @@ const Icon = styled.div`
 `;
 
 const Online5mokIcon = styled.img`
-    ${props => props.size === 'large' ? 
-        `width: 50px; height: 50px;` :
-        `width: 20px; height: 20px;`
-    }
+    ${(props) => (props.size === 'large' ? `width: 50px; height: 50px;` : `width: 20px; height: 20px;`)}
 `;
 
 const Text = styled.div`
@@ -55,11 +52,10 @@ const ActivedButton = styled.div`
     border: 0px;
     font-size: 1rem;
     display: flex;
-    background: #E3E6E7;
+    background: #e3e6e7;
     ${(props) => props.width && `width: ${props.width}`};
     box-shadow: ${colorConcave[0]};
 `;
-
 
 const Background = () => {
     return (

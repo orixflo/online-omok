@@ -1,20 +1,15 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import WindowForm from '../common/WindowForm';
-import Tab from "../common/Tab";
-import TabButton from "../common/TabButton";
-import { useState } from "react";
-import SpacerHorizontal from "../common/SpacerHorizontal";
-import Button from "../common/Button";
-import RoomList from "./RoomList";
-import Input from "../common/Input";
-import { colorConcave } from "../../styles/colors";
-
+import Tab from '../common/Tab';
+import TabButton from '../common/TabButton';
+import { useState } from 'react';
+import CreateGameRoom from './CreateGameRoom';
 
 const LobbyWrapper = styled.div`
     font-family: 'DungGeunMo';
-    width: 40vw;
-    min-width: 768px;
+    width: 768px;
     height: 80vh;
+    max-height: 768px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,6 +41,10 @@ const TabBox = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+    @media (max-width: 768px) {
+        height: calc(50% - 20px);
+    }
 `;
 
 const TabMenuButton = styled.div`
@@ -60,38 +59,26 @@ const ChatBox = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+    @media (max-width: 768px) {
+        height: calc(50% - 24px);
+    }
 `;
 
-const ChatIn = styled.div`
-    font-family: 'DungGeunMo';
-    width: 100%;
-    height: 80%;
-    background: white;
-    border: 0px;
-    box-shadow: ${colorConcave[0]};
+const CreateRoom = styled.div`
+    background: red;
 `;
 
-const ChatOut = styled.div`
-    font-family: 'DungGeunMo';
-    width: 100%;
-    height: 20px;
-    margin-top: 10px;
-    display: flex;    
-    justify-content: space-between;
-`;
-
-const  Lobby = () => {
+const Lobby = ({ userNum, children, changeOpiont, createGameRoom, roomList, animationtype }) => {
     const [btn, setBtn] = useState({
-        btn1: true,
-        btn2: false,
-        btn3: false,
+        lobby: true,
+        createRoom: false,
     });
-    
+
     const btnClick = (btnName) => {
         setBtn({
-            btn1: false,
-            btn2: false,
-            btn3: false,
+            lobby: false,
+            createRoom: false,
         });
         setBtn({
             [btnName]: true,
@@ -100,26 +87,34 @@ const  Lobby = () => {
 
     return (
         <LobbyWrapper>
-            <WindowForm title={"user1/1000pts"} close={true}>
-                <Content>  
+            <WindowForm title={`${userNum}명 접속중`} animationtype={animationtype}>
+                <Content>
                     <TabBox>
                         <TabMenuButton>
-                            <TabButton activated={btn.btn1} onClick={() => {btnClick("btn1")}}>대기실</TabButton>
-                            <TabButton activated={btn.btn2} onClick={() => {btnClick("btn2")}}>내정보</TabButton>
-                            <TabButton activated={btn.btn3} onClick={() => {btnClick("btn3")}}>순위</TabButton>
+                            <TabButton
+                                activated={String(btn.lobby)}
+                                onClick={() => {
+                                    btnClick('lobby');
+                                }}
+                            >
+                                대기실
+                            </TabButton>
+                            <TabButton
+                                activated={String(btn.createRoom)}
+                                onClick={() => {
+                                    btnClick('createRoom');
+                                }}
+                            >
+                                방만들기
+                            </TabButton>
                         </TabMenuButton>
                         <Tab>
-                            <RoomList />
+                            {btn.lobby && roomList}
+                            {btn.createRoom && <CreateGameRoom changeOpiont={changeOpiont} createGameRoom={createGameRoom} />}
                         </Tab>
                     </TabBox>
-                    <ChatBox>
-                        <ChatIn />
-                        <ChatOut>
-                            <Input width={"80%"} height={"20px"} style={{marginLeft: 0}}/>
-                            <SpacerHorizontal width={'8px'} />
-                            <Button width={'20%'} height={'22px'} style={{marginRight: 0}}>입력</Button>
-                        </ChatOut>
-                    </ChatBox>
+                    <CreateRoom></CreateRoom>
+                    <ChatBox>{children}</ChatBox>
                 </Content>
             </WindowForm>
         </LobbyWrapper>

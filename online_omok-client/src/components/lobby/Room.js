@@ -1,5 +1,6 @@
-import styled from "styled-components";
-import Button from "../common/Button";
+import styled from 'styled-components';
+import Button from '../common/Button';
+import { useEffect, useState } from 'react';
 
 const RoomWrapper = styled.div`
     margin-top: 20px;
@@ -8,7 +9,7 @@ const RoomWrapper = styled.div`
     margin-right: auto;
     padding-left: 4px;
     padding-right: 4px;
-    background: #C0C0C0;
+    background: #c0c0c0;
     width: 240px;
     height: 60px;
     display: grid;
@@ -19,9 +20,9 @@ const RoomWrapper = styled.div`
 
     box-shadow:
         // Internal frame
-        -2px -2px #DFDFDF,
-        -2px 0px #DFDFDF,
-        0px -2px #DFDFDF,
+        -2px -2px #dfdfdf,
+        -2px 0px #dfdfdf,
+        0px -2px #dfdfdf,
         2px 2px #808080,
         2px -2px #808080,
         -2px 2px #808080,
@@ -29,9 +30,9 @@ const RoomWrapper = styled.div`
         -4px -4px #808080,
         -4px 2px #808080,
         2px -4px #808080,
-        4px 4px #DFDFDF,
-        4px -4px #DFDFDF,
-        -4px 4px #DFDFDF;
+        4px 4px #dfdfdf,
+        4px -4px #dfdfdf,
+        -4px 4px #dfdfdf;
 
     p:nth-child(2) {
         grid-column-start: 1;
@@ -46,25 +47,54 @@ const RoomWrapper = styled.div`
         grid-column-start: 2;
         grid-column-end: 3;
     }
-
 `;
 
 const RoomType = styled.div`
     position: relative;
-    background: #C0C0C0;
+    background: #c0c0c0;
     grid-column-start: 1;
     grid-column-end: 3;
     top: -4px;
-    
 `;
 
-const Room = () => {
+const Room = ({ roomType, host, currentPlayer, maxPlayer, joinRoom }) => {
+    const [mode, setMode] = useState();
+    const [name, setName] = useState();
+    const [disable, setDisable] = useState(false);
+    const roomCode = `room${host.guestCode}`;
+
+    useEffect(() => {
+        if (roomType === 'option1') setMode('일반게임');
+        if (roomType === 'option2') setMode('시야제한');
+        if (roomType === 'option3') setMode('협동게임');
+    }, []);
+
+    useEffect(() => {
+        if (maxPlayer <= currentPlayer) setDisable(true);
+        else setDisable(false);
+    }, [currentPlayer]);
+
+    useEffect(() => {
+        if (host.nickname.length > 7) setName(`${host.nickname.substr(0, 7)}...`);
+        else setName(host.nickname);
+    }, []);
+
     return (
         <RoomWrapper>
-            <RoomType>일반</RoomType>
-            <p>Host: user001 / 1200pts</p>
-            <p>인원 1/2</p>
-            <Button width={'90%'}>{"참가"}</Button>
+            <RoomType>{mode}</RoomType>
+            <p>Host: {`(${host.guestCode})${name}`}</p>
+            <p>
+                인원 : {currentPlayer}/{maxPlayer}
+            </p>
+            <Button
+                disabled={disable}
+                onClick={() => {
+                    joinRoom(roomCode);
+                }}
+                width={'90%'}
+            >
+                {disable ? 'FULL' : '참가'}
+            </Button>
         </RoomWrapper>
     );
 };

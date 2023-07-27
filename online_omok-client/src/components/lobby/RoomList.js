@@ -1,13 +1,14 @@
-import styled from "styled-components";
-import btnScrUp from "../../asset/img/scr_up.png";
-import btnScrDown from "../../asset/img/scr_down.png";
-import { colorScrollBtnOff, colorScrollBtnOn } from "../../styles/colors";
-import Room from "./Room";
+import styled from 'styled-components';
+import btnScrUp from '../../asset/img/scr_up.png';
+import btnScrDown from '../../asset/img/scr_down.png';
+import { colorScrollBtnOff, colorScrollBtnOn } from '../../styles/colors';
+import Room from './Room';
+import React from 'react';
 
 const RoomListWrapper = styled.div`
     width: calc(100% - 4px);
     height: calc(100% - 4px);
-    background: #C0C0C0;
+    background: #c0c0c0;
     overflow-y: scroll;
     overflow-x: hidden;
     display: grid;
@@ -22,7 +23,7 @@ const RoomListWrapper = styled.div`
         width: 30px;
     }
     &::-webkit-scrollbar-thumb {
-        background: #C0C0C0;
+        background: #c0c0c0;
         background-clip: padding-box;
         box-shadow: ${colorScrollBtnOff};
 
@@ -31,12 +32,12 @@ const RoomListWrapper = styled.div`
         }
     }
     &::-webkit-scrollbar-track {
-        background: #DFDFDF;
+        background: #dfdfdf;
     }
     &::-webkit-scrollbar-button:vertical:start:decrement {
         width: 30px;
         height: 30px;
-        background: #C0C0C0;
+        background: #c0c0c0;
         background-image: url(${btnScrUp});
         background-repeat: no-repeat;
         background-position: center;
@@ -50,7 +51,7 @@ const RoomListWrapper = styled.div`
     &::-webkit-scrollbar-button:vertical:end:increment {
         width: 30px;
         height: 30px;
-        background: #C0C0C0;
+        background: #c0c0c0;
         background-image: url(${btnScrDown});
         background-repeat: no-repeat;
         background-position: center;
@@ -63,19 +64,14 @@ const RoomListWrapper = styled.div`
     }
 `;
 
-const RoomList = () => {
-    return (
-        <RoomListWrapper>
-            <Room />
-            <Room />
-            <Room />
-            <Room />
-            <Room />
-            <Room />
-            <Room />
-            <Room />
-        </RoomListWrapper>
-    );
+const RoomList = ({ roomListArr, joinRoom }) => {
+    const roomList =
+        roomListArr &&
+        roomListArr.map((game, index) => (
+            <Room key={index} roomType={game.option} host={game.host} currentPlayer={game.currentPlayer} maxPlayer={game.maxPlayer} joinRoom={joinRoom} />
+        ));
+
+    return <RoomListWrapper>{roomList}</RoomListWrapper>;
 };
 
-export default RoomList;
+export default React.memo(RoomList);

@@ -1,15 +1,17 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StyledTabButton = styled.button`
     font-family: 'DungGeunMo';
-    ${props => props.fontSize ? `font-size: ${props.fontSize}` : 'font-size: 1.2rem;'};
+    ${(props) => (props.fontSize ? `font-size: ${props.fontSize}` : 'font-size: 1.2rem;')};
 
     border: 0px;
     margin: 4px;
-    background: #C0C0C0;
-    ${props => props.width && `width: ${props.width}`};
+    background: #c0c0c0;
+    ${(props) => props.width && `width: ${props.width}`};
 
-    ${props => props.activated ? `
+    ${(props) =>
+        props.activated === 'true'
+            ? `
         box-shadow:
             -2px -2px #DFDFDF,
             0px -2px #dfdfdf,
@@ -22,7 +24,8 @@ const StyledTabButton = styled.button`
             -4px 2px #FFFFFF,
             2px -4px #FFFFFF,
             4px -4px #000000;
-    ` : `
+    `
+            : `
         box-shadow:
             -2px -2px #DFDFDF,
             -2px 0px #DFDFDF,
