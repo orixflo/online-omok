@@ -82,7 +82,7 @@ const Content = styled.div`
     position: relative;
 `;
 
-const InGame = ({ game, chat, placingStone, summary, ingameFn, swapForm, swapSenderName, alertType, animationtype }) => {
+const InGame = ({ game, chat, placingStone, summary, ingameFn, swapForm, swapSenderName, alertType, animationtype, error, surrenderForm }) => {
     const [panel, setPanel] = useState({ topPanel: '', bottomPanel: '' });
     const [emoji, setEmoji] = useState([]);
     const [playerSlot, setPlayerSlot] = useState([
@@ -141,6 +141,7 @@ const InGame = ({ game, chat, placingStone, summary, ingameFn, swapForm, swapSen
 
     return (
         <InGameWrapper>
+            {error === 'disconnected' && <Alert text={'접속이 종료됬습니다.'} type={'alert'} confirm={ingameFn.reload} />}
             {alertType === 'closeRoom' && <Alert text={'호스트가 게임을 종료했습니다.'} type={'alert'} confirm={ingameFn.leaveRoom} />}
             {swapForm === 'requestForm' && <RequestSwapForm game={game} ingameFn={ingameFn} />}
             {swapForm === 'responseForm' && (
@@ -154,6 +155,7 @@ const InGame = ({ game, chat, placingStone, summary, ingameFn, swapForm, swapSen
             {summary.winnerArr.length > 0 && (
                 <GameSummary winnerPosArr={summary.winnerArr} myPos={game.position} tile={summary.tile} closeSummary={ingameFn.closeSummary} />
             )}
+            {surrenderForm === 'surrenderForm' && <Alert text={'기권 하시겠습니까?'} type={'confirm'} confirm={ingameFn.surrender} cancel={() => ingameFn.setSurrenderForm('')} />}
             {alertType === 'leaveRoom' && (
                 <Alert text={'방을 나가시겠습니까?'} type={'confirm'} confirm={ingameFn.leaveRoom} cancel={() => ingameFn.setAlertType('')} />
             )}

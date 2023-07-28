@@ -1,6 +1,8 @@
 /online_omok-server/node_modules
 /online_omok-client/node_modules
 /online_omok-server/.env
+/online_omok-server/Dockerfile
+/online_omok-server/.dockerignore
 
 /online_omok-client/.pnp
 /online_omok-client/.env

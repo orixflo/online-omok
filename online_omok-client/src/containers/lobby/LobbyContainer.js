@@ -20,10 +20,12 @@ const LobbyContainer = () => {
     const dispatch = useDispatch();
     const [animationtype, setAnimationtype] = useState('open');
     const [userNum, setUserNum] = useState(0);
+    const [err, setErr] = useState();
 
     useEffect(() => {
         socket.emit('lobby_join', { user: { guestCode: user.guestCode, nickname: user.nickname }, room: 'lobby' }, (error) => {
             if (error) {
+                setErr(error);
                 console.log(error);
             }
             dispatch(setHostData({ key: 'hostCode', value: user.guestCode }));
@@ -65,8 +67,9 @@ const LobbyContainer = () => {
     };
 
     const sendMessage = () => {
-        socket.emit('lobby_sendMessage', { user: user.nickname, message: chat.input }, (error) => {
+        socket.emit('lobby_sendMessage', { user: user, message: chat.input }, (error) => {
             if (error) {
+                setErr(error);
                 console.log(error);
             }
         });
@@ -80,6 +83,7 @@ const LobbyContainer = () => {
     const createGameRoom = () => {
         socket.emit('lobby_createRoom', { hostCode: user.guestCode, option: lobby.room.mode }, (error) => {
             if (error) {
+                setErr(error);
                 console.log(error);
             }
         });
@@ -88,10 +92,15 @@ const LobbyContainer = () => {
     const joinRoom = (code) => {
         socket.emit('lobby_joinRoom', { user: { guestCode: user.guestCode, nickname: user.nickname }, roomCode: code }, (error) => {
             if (error) {
+                setErr(error);
                 console.log(error);
             }
         });
     };
+
+    const reload = () => {
+        window.location.reload();
+    }
 
     return (
         <Lobby
@@ -100,6 +109,8 @@ const LobbyContainer = () => {
             createGameRoom={createGameRoom}
             roomList={<RoomList roomListArr={lobby.list} joinRoom={joinRoom} />}
             animationtype={animationtype}
+            error={err}
+            reload={reload}
         >
             <ReceiveChat chatArr={chat.chatArr} />
             <SendChat sendMessage={sendMessage} onChange={onChange} value={chat.input} />

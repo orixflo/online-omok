@@ -21,6 +21,8 @@ const IngameContainer = () => {
     const [swapSender, setSwapSender] = useState();
     const [swapSenderName, setSwapSenderName] = useState('');
     const [animationtype, setAnimationtype] = useState('open');
+    const [error, setError] = useState('');
+    const [surrenderForm, setSurrenderForm] = useState('');
 
     const getPlayerPosition = (playerArr, myGuestCode) => {
         let position = 0;
@@ -118,17 +120,20 @@ const IngameContainer = () => {
 
     const changePlayerState = () => {
         socket.emit('game_changeState', { roomCode: game.roomCode, guestCode: user.guestCode }, (error) => {
+            setError(error);
             console.log(error);
         });
     };
 
     const placingStone = (objData) => {
         setAnimationtype('');
-        socket.emit('game_placingStone', { roomCode: game.roomCode, objData: objData }, (error) => {
+        socket.emit('game_placingStone', { roomCode: game.roomCode, objData: objData, guestCode: user.guestCode }, (error) => {
             if (error === 'ruleViolation') {
                 setAnimationtype('error');
-            }
-            if (error === 'bad request') {
+            } else if (error === 'conflict') {
+                //
+            } else {
+                setError(error);
                 console.log(error);
             }
         });
@@ -151,6 +156,7 @@ const IngameContainer = () => {
             dispatch(initChat());
             dispatch(setHostData({ key: 'mode', value: 'option1' }));
             socket.emit('game_leaveGame', { roomCode: game.roomCode, guestCode: user.guestCode }, (error) => {
+                setError(error);
                 console.log(error);
             });
         }, 200);
@@ -158,33 +164,43 @@ const IngameContainer = () => {
 
     const surrender = () => {
         socket.emit('game_surrender', { guestCode: user.guestCode, roomCode: game.roomCode }, (error) => {
+            setError(error);
             console.log(error);
         });
     };
 
     const sendMessage = () => {
-        socket.emit('game_sendMessage', { roomCode: game.roomCode, user: user.nickname, message: chat.input }, (error) => {
+        socket.emit('game_sendMessage', { roomCode: game.roomCode, user: user, message: chat.input }, (error) => {
+            setError(error);
             console.log(error);
         });
         dispatch(changeInput(''));
     };
     const sendEmoji = (emoji) => {
-        socket.emit('game_sendEmoji', { roomCode: game.roomCode, position: game.position, emoji: emoji }, (error) => {
+        socket.emit('game_sendEmoji', { roomCode: game.roomCode, position: game.position, emoji: emoji, guestCode: user.guestCode }, (error) => {
+            setError(error);
             console.log(error);
         });
     };
 
     // swap player's position
     const requestSwap = (targetPosition) => {
-        socket.emit('game_requestSwap', { roomCode: game.roomCode, myPosition: game.position, targetPosition: targetPosition }, (error) => {
+        socket.emit('game_requestSwap', { roomCode: game.roomCode, myPosition: game.position, targetPosition: targetPosition, guestCode: user.guestCode }, (error) => {
+            setError(error);
             console.log(error);
         });
+        setSwapForm('');
     };
     const responseSwap = (type) => {
-        socket.emit('game_responseSwap', { roomCode: game.roomCode, type: type, sender: swapSender, recipient: game.position }, (error) => {
+        socket.emit('game_responseSwap', { roomCode: game.roomCode, type: type, sender: swapSender, recipient: game.position, guestCode: user.guestCode }, (error) => {
+            setError(error);
             console.log(error);
         });
     };
+
+    const reload = () => {
+        window.location.reload();
+    }
 
     const ingameFn = {
         changeChatInput: changeChatInput,
@@ -198,6 +214,8 @@ const IngameContainer = () => {
         leaveRoom: leaveRoom,
         surrender: surrender,
         setAlertType: setAlertType,
+        reload: reload,
+        setSurrenderForm: setSurrenderForm,
     };
 
     return (
@@ -212,6 +230,8 @@ const IngameContainer = () => {
             ingameFn={ingameFn}
             alertType={alertType}
             animationtype={animationtype}
+            error={error}
+            surrenderForm={surrenderForm}
         />
     );
 };

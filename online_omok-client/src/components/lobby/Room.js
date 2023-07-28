@@ -65,8 +65,7 @@ const Room = ({ roomType, host, currentPlayer, maxPlayer, joinRoom }) => {
 
     useEffect(() => {
         if (roomType === 'option1') setMode('일반게임');
-        if (roomType === 'option2') setMode('시야제한');
-        if (roomType === 'option3') setMode('협동게임');
+        if (roomType === 'option2') setMode('협동게임');
     }, []);
 
     useEffect(() => {

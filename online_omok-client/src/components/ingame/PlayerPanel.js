@@ -172,18 +172,9 @@ const PlayerPanel = ({ type, color, playerSlot, roomState, ingameFn, emoji, swap
     }, [swapBtn]);
 
     const onClickSurrender = () => {
-        setConfirm(true);
+        ingameFn.setSurrenderForm('surrenderForm');
     };
-
-    const surrender = () => {
-        ingameFn.surrender();
-        setConfirm(false);
-    };
-
-    const onCalcelSurrender = () => {
-        setConfirm(false);
-    };
-
+    
     const onEmojiListBtn = () => {
         if (emojiListVisibility) {
             setEmojiListVisibility(false);
@@ -199,7 +190,6 @@ const PlayerPanel = ({ type, color, playerSlot, roomState, ingameFn, emoji, swap
 
     return (
         <PlayerPanelWrapper color={color}>
-            {confirm && <Alert text={'기권 하시겠습니까?'} type={'confirm'} confirm={surrender} cancel={onCalcelSurrender} />}
             {emojiListVisibility && (
                 <EmojiList>
                     <Button width={'60px'} height={'30px'} onClick={() => onSelectEmojiBtn('happy')}>

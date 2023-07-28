@@ -41,6 +41,10 @@ io.on('connection', (socket) => {
     // # lobby - join lobby
     socket.on('lobby_join', ({ user, room }, callback) => {
         try {
+            if (userDataMap.has(user.guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             socket.join(room);
 
             io.to('lobby').emit('lobby_receiveMessage', {
@@ -65,9 +69,13 @@ io.on('connection', (socket) => {
     // # lobby - send message
     socket.on('lobby_sendMessage', ({ user, message }, callback) => {
         try {
+            if (userDataMap.has(user.guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             io.to('lobby').emit('lobby_receiveMessage', {
                 type: 'user',
-                text: `${user} : ${message}`,
+                text: `${user.nickname} : ${message}`,
             });
         } catch (e) {
             console.log('socket.lobby_sendMessage ERROR >>');
@@ -79,6 +87,10 @@ io.on('connection', (socket) => {
     // # lobby - create room
     socket.on('lobby_createRoom', ({ hostCode, option }, callback) => {
         try {
+            if (userDataMap.has(hostCode) === false) {
+                callback('disconnected');
+                return;
+            }
             userDataMap.set(hostCode, {
                 ...userDataMap.get(hostCode),
                 room: `room${hostCode}`,
@@ -123,6 +135,10 @@ io.on('connection', (socket) => {
     // # lobby - join room
     socket.on('lobby_joinRoom', ({ user, roomCode }, callback) => {
         try {
+            if (userDataMap.has(user.guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             if (roomDataMap.get(roomCode).maxPlayer <= roomDataMap.get(roomCode).player.length) return;
             userDataMap.set(user.guestCode, {
                 ...userDataMap.get(user.guestCode),
@@ -167,6 +183,10 @@ io.on('connection', (socket) => {
     // # in game - change player's state (ready, waiting)
     socket.on('game_changeState', ({ roomCode, guestCode }, callback) => {
         try {
+            if (userDataMap.has(guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             const nextPlayerArr = roomDataMap.get(roomCode).player;
             nextPlayerArr.map((arr) => {
                 if (arr.guestCode === guestCode) {
@@ -202,6 +222,10 @@ io.on('connection', (socket) => {
     // # in game - placing stone
     socket.on('game_placingStone', (objData, callback) => {
         try {
+            if (userDataMap.has(objData.guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             if (checkConflict(roomDataMap.get(objData.roomCode).tile, objData.objData)) {
                 callback('conflict');
             } else if (checkRuleViolation(roomDataMap.get(objData.roomCode).tile, objData.objData)) {
@@ -258,6 +282,10 @@ io.on('connection', (socket) => {
     // # in game - leave game
     socket.on('game_leaveGame', ({ guestCode, roomCode }, callback) => {
         try {
+            if (userDataMap.has(guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             if (roomDataMap.has(roomCode)) {
                 // in case of user is host, kick all player in room and remove room
                 if (roomDataMap.get(roomCode).host.guestCode === guestCode) {
@@ -305,9 +333,13 @@ io.on('connection', (socket) => {
     // # in game - send message at room
     socket.on('game_sendMessage', ({ roomCode, user, message }, callback) => {
         try {
+            if (userDataMap.has(user.guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             io.to(roomCode).emit('game_receiveMessage', {
                 type: 'user',
-                text: `${user} : ${message}`,
+                text: `${user.nickname} : ${message}`,
             });
         } catch (e) {
             console.log('socket.game_sendMessage ERROR >>');
@@ -319,6 +351,10 @@ io.on('connection', (socket) => {
     // # in game - surrender
     socket.on('game_surrender', ({ guestCode, roomCode }, callback) => {
         try {
+            if (userDataMap.has(guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             const nextPlayerArr = roomDataMap.get(roomCode).player;
             nextPlayerArr.map((arr) => {
                 arr.state = 'waiting';
@@ -344,8 +380,12 @@ io.on('connection', (socket) => {
     });
 
     // # in game - send emoji
-    socket.on('game_sendEmoji', ({ roomCode, position, emoji }, callback) => {
+    socket.on('game_sendEmoji', ({ roomCode, position, emoji, guestCode }, callback) => {
         try {
+            if (userDataMap.has(guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             io.to(roomCode).emit('game_receiveEmoji', {
                 position: position,
                 emoji: emoji,
@@ -358,8 +398,12 @@ io.on('connection', (socket) => {
     });
 
     // # in game - request swap position
-    socket.on('game_requestSwap', ({ roomCode, myPosition, targetPosition }, callback) => {
+    socket.on('game_requestSwap', ({ roomCode, myPosition, targetPosition, guestCode }, callback) => {
         try {
+            if (userDataMap.has(guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             if (roomDataMap.get(roomCode).player[myPosition].swap === 'true' || roomDataMap.get(roomCode).player[targetPosition].swap === 'true') {
                 return;
             }
@@ -387,8 +431,12 @@ io.on('connection', (socket) => {
     });
 
     // # in game - response swap
-    socket.on('game_responseSwap', ({ roomCode, type, sender, recipient }, callback) => {
+    socket.on('game_responseSwap', ({ roomCode, type, sender, recipient, guestCode }, callback) => {
         try {
+            if (userDataMap.has(guestCode) === false) {
+                callback('disconnected');
+                return;
+            }
             if (roomDataMap.has(roomCode) === false) {
                 return;
             }

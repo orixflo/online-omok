@@ -4,6 +4,7 @@ import Tab from '../common/Tab';
 import TabButton from '../common/TabButton';
 import { useState } from 'react';
 import CreateGameRoom from './CreateGameRoom';
+import Alert from '../common/Alert';
 
 const LobbyWrapper = styled.div`
     font-family: 'DungGeunMo';
@@ -69,7 +70,7 @@ const CreateRoom = styled.div`
     background: red;
 `;
 
-const Lobby = ({ userNum, children, changeOpiont, createGameRoom, roomList, animationtype }) => {
+const Lobby = ({ userNum, children, changeOpiont, createGameRoom, roomList, animationtype, error, reload }) => {
     const [btn, setBtn] = useState({
         lobby: true,
         createRoom: false,
@@ -87,6 +88,7 @@ const Lobby = ({ userNum, children, changeOpiont, createGameRoom, roomList, anim
 
     return (
         <LobbyWrapper>
+            {error === 'disconnected' && <Alert text={'접속이 종료됬습니다.'} type={'alert'} confirm={reload} />}
             <WindowForm title={`${userNum}명 접속중`} animationtype={animationtype}>
                 <Content>
                     <TabBox>
