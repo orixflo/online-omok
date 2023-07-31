@@ -72,6 +72,7 @@ const SystemMessage = styled.div`
 `;
 
 const Message = styled.div`
+    overflow-wrap: break-word;
     font-size: 1.1rem;
     margin-top: 4px;
     margin-bottom: 4px;
