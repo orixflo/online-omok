@@ -167,6 +167,7 @@ const IngameContainer = () => {
             setError(error);
             console.log(error);
         });
+        setSurrenderForm('')
     };
 
     const sendMessage = () => {
