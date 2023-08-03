@@ -2,9 +2,7 @@
 
 ---
 
-![로비.png](https://github.com/orixflo/online-omok/blob/master/_git%20images/lobby.png)
-
-![인게임2.png](https://github.com/orixflo/online-omok/blob/master/_git%20images/ingame.png)
+![게임.png](https://github.com/orixflo/online-omok/blob/master/_git%20images/game.png)
 
 **2인 팀으로 즐기는 3-3 금수, 장목 착수 가능의 일반 롤 오목 게임입니다.**
 
