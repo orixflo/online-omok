@@ -7,7 +7,7 @@ const convertTileToString = require('../lib/ingame/convertTileToString');
 const checkRuleViolation = require('../lib/ingame/checkRuleViolation');
 const checkGameEnd = require('../lib/ingame/checkGameEnd');
 const updateArray = require('../lib/updateArray');
-const checkUserConnected = require('./lib/checkUserConnected');
+const checkUserConnection = require('./lib/checkUserConnection');
 
 const options = {
     cors: {
@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
     // # lobby - join lobby
     socket.on('lobby_join', ({ user, room }, callback) => {
         try {
-            checkUserConnected(userDataMap, user.guestCode);
+            checkUserConnection(userDataMap, user.guestCode);
             socket.join(room);
             io.to('lobby').emit('lobby_receiveMessage', {
                 type: 'system',
@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
     // # lobby - send message
     socket.on('lobby_sendMessage', ({ user, message }, callback) => {
         try {
-            checkUserConnected(userDataMap, user.guestCode);
+            checkUserConnection(userDataMap, user.guestCode);
             io.to('lobby').emit('lobby_receiveMessage', {
                 type: 'user',
                 text: `${user.nickname} : ${message}`,
@@ -81,7 +81,7 @@ io.on('connection', (socket) => {
     // # lobby - create room
     socket.on('lobby_createRoom', ({ hostCode, option }, callback) => {
         try {
-            checkUserConnected(userDataMap, hostCode);
+            checkUserConnection(userDataMap, hostCode);
             userDataMap.set(hostCode, {
                 ...userDataMap.get(hostCode),
                 room: `room${hostCode}`,
@@ -126,7 +126,7 @@ io.on('connection', (socket) => {
     // # lobby - join room
     socket.on('lobby_joinRoom', ({ user, roomCode }, callback) => {
         try {
-            checkUserConnected(userDataMap, user.guestCode);
+            checkUserConnection(userDataMap, user.guestCode);
             if (roomDataMap.get(roomCode).maxPlayer <= roomDataMap.get(roomCode).player.length) return;
             userDataMap.set(user.guestCode, {
                 ...userDataMap.get(user.guestCode),
@@ -171,7 +171,7 @@ io.on('connection', (socket) => {
     // # in game - change player's state (ready, waiting)
     socket.on('game_changeState', ({ roomCode, guestCode }, callback) => {
         try {
-            checkUserConnected(userDataMap, guestCode);
+            checkUserConnection(userDataMap, guestCode);
             const nextPlayerArr = roomDataMap.get(roomCode).player;
             nextPlayerArr.map((arr) => {
                 if (arr.guestCode === guestCode) {
@@ -207,7 +207,7 @@ io.on('connection', (socket) => {
     // # in game - placing stone
     socket.on('game_placingStone', (objData, callback) => {
         try {
-            checkUserConnected(userDataMap, objData.guestCode);
+            checkUserConnection(userDataMap, objData.guestCode);
             if (checkConflict(roomDataMap.get(objData.roomCode).tile, objData.objData)) {
                 callback('conflict');
             } else if (checkRuleViolation(roomDataMap.get(objData.roomCode).tile, objData.objData)) {
@@ -264,7 +264,7 @@ io.on('connection', (socket) => {
     // # in game - leave game
     socket.on('game_leaveGame', ({ guestCode, roomCode }, callback) => {
         try {
-            checkUserConnected(userDataMap, guestCode);
+            checkUserConnection(userDataMap, guestCode);
             if (roomDataMap.has(roomCode)) {
                 // in case of user is host, kick all player in room and remove room
                 if (roomDataMap.get(roomCode).host.guestCode === guestCode) {
@@ -312,7 +312,7 @@ io.on('connection', (socket) => {
     // # in game - send message at room
     socket.on('game_sendMessage', ({ roomCode, user, message }, callback) => {
         try {
-            checkUserConnected(userDataMap, user.guestCode);
+            checkUserConnection(userDataMap, user.guestCode);
             io.to(roomCode).emit('game_receiveMessage', {
                 type: 'user',
                 text: `${user.nickname} : ${message}`,
@@ -327,7 +327,7 @@ io.on('connection', (socket) => {
     // # in game - surrender
     socket.on('game_surrender', ({ guestCode, roomCode }, callback) => {
         try {
-            checkUserConnected(userDataMap, guestCode);
+            checkUserConnection(userDataMap, guestCode);
             const nextPlayerArr = roomDataMap.get(roomCode).player;
             nextPlayerArr.map((arr) => {
                 arr.state = 'waiting';
@@ -355,7 +355,7 @@ io.on('connection', (socket) => {
     // # in game - send emoji
     socket.on('game_sendEmoji', ({ roomCode, position, emoji, guestCode }, callback) => {
         try {
-            checkUserConnected(userDataMap, guestCode);
+            checkUserConnection(userDataMap, guestCode);
             io.to(roomCode).emit('game_receiveEmoji', {
                 position: position,
                 emoji: emoji,
@@ -370,7 +370,7 @@ io.on('connection', (socket) => {
     // # in game - request swap position
     socket.on('game_requestSwap', ({ roomCode, myPosition, targetPosition, guestCode }, callback) => {
         try {
-            checkUserConnected(userDataMap, guestCode);
+            checkUserConnection(userDataMap, guestCode);
             if (roomDataMap.get(roomCode).player[myPosition].swap === 'true' || roomDataMap.get(roomCode).player[targetPosition].swap === 'true') {
                 return;
             }
@@ -400,7 +400,7 @@ io.on('connection', (socket) => {
     // # in game - response swap
     socket.on('game_responseSwap', ({ roomCode, type, sender, recipient, guestCode }, callback) => {
         try {
-            checkUserConnected(userDataMap, guestCode);
+            checkUserConnection(userDataMap, guestCode);
             if (roomDataMap.has(roomCode) === false) {
                 return;
             }

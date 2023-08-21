@@ -1,7 +1,7 @@
-const checkUserConnected = (userDataMap, guestCode) => {
+const checkUserConnection = (userDataMap, guestCode) => {
     if (userDataMap.has(guestCode) === false) {
         throw new Error('disconnected');
     }
 };
 
-module.exports = checkUserConnected;
+module.exports = checkUserConnection;
