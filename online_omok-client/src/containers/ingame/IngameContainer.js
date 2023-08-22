@@ -102,7 +102,8 @@ const IngameContainer = () => {
             } else if (game.position === swapData.recipient) {
                 dispatch(setGameData({ form: 'ingame', key: 'position', value: swapData.sender }));
             }
-            dispatch(setEmoji({ position: game.position, emoji: '-' }));
+            dispatch(setEmoji({ position: swapData.sender, emoji: '-' }));
+            dispatch(setEmoji({ position: swapData.recipient, emoji: '-' }));
             dispatch(setGame(swapData.roomData));
         });
         socket.on('game_rejectSwap', (roomData) => {
@@ -167,7 +168,7 @@ const IngameContainer = () => {
             setError(error);
             console.log(error);
         });
-        setSurrenderForm('')
+        setSurrenderForm('');
     };
 
     const sendMessage = () => {
@@ -186,22 +187,30 @@ const IngameContainer = () => {
 
     // swap player's position
     const requestSwap = (targetPosition) => {
-        socket.emit('game_requestSwap', { roomCode: game.roomCode, myPosition: game.position, targetPosition: targetPosition, guestCode: user.guestCode }, (error) => {
-            setError(error);
-            console.log(error);
-        });
+        socket.emit(
+            'game_requestSwap',
+            { roomCode: game.roomCode, myPosition: game.position, targetPosition: targetPosition, guestCode: user.guestCode },
+            (error) => {
+                setError(error);
+                console.log(error);
+            },
+        );
         setSwapForm('');
     };
     const responseSwap = (type) => {
-        socket.emit('game_responseSwap', { roomCode: game.roomCode, type: type, sender: swapSender, recipient: game.position, guestCode: user.guestCode }, (error) => {
-            setError(error);
-            console.log(error);
-        });
+        socket.emit(
+            'game_responseSwap',
+            { roomCode: game.roomCode, type: type, sender: swapSender, recipient: game.position, guestCode: user.guestCode },
+            (error) => {
+                setError(error);
+                console.log(error);
+            },
+        );
     };
 
     const reload = () => {
         window.location.reload();
-    }
+    };
 
     const ingameFn = {
         changeChatInput: changeChatInput,
