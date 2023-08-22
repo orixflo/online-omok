@@ -7,6 +7,7 @@ const convertTileToString = require('../lib/ingame/convertTileToString');
 const checkRuleViolation = require('../lib/ingame/checkRuleViolation');
 const checkGameEnd = require('../lib/ingame/checkGameEnd');
 const updateArray = require('../lib/updateArray');
+const checkUserConnection = require('./lib/checkUserConnection');
 
 const options = {
     cors: {
@@ -41,12 +42,8 @@ io.on('connection', (socket) => {
     // # lobby - join lobby
     socket.on('lobby_join', ({ user, room }, callback) => {
         try {
-            if (userDataMap.has(user.guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, user.guestCode);
             socket.join(room);
-
             io.to('lobby').emit('lobby_receiveMessage', {
                 type: 'system',
                 text: `${user.nickname}(${user.guestCode}) 님 이 로비에 입장했습니다.`,
@@ -60,37 +57,31 @@ io.on('connection', (socket) => {
                 swap: 'false',
             });
         } catch (e) {
-            console.log('socket.lobby_join ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> lobby_join >> guestCode: ${user.guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # lobby - send message
     socket.on('lobby_sendMessage', ({ user, message }, callback) => {
         try {
-            if (userDataMap.has(user.guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, user.guestCode);
             io.to('lobby').emit('lobby_receiveMessage', {
                 type: 'user',
                 text: `${user.nickname} : ${message}`,
             });
         } catch (e) {
-            console.log('socket.lobby_sendMessage ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> lobby_sendMessage >> guestCode: ${user.guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # lobby - create room
     socket.on('lobby_createRoom', ({ hostCode, option }, callback) => {
         try {
-            if (userDataMap.has(hostCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, hostCode);
             userDataMap.set(hostCode, {
                 ...userDataMap.get(hostCode),
                 room: `room${hostCode}`,
@@ -126,19 +117,16 @@ io.on('connection', (socket) => {
                 text: `${userDataMap.get(hostCode).nickname} 님이 게임을 생성했습니다.`,
             });
         } catch (e) {
-            console.log('socket.lobby_createRoom ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> lobby_createRoom >> guestCode: ${hostCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # lobby - join room
     socket.on('lobby_joinRoom', ({ user, roomCode }, callback) => {
         try {
-            if (userDataMap.has(user.guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, user.guestCode);
             if (roomDataMap.get(roomCode).maxPlayer <= roomDataMap.get(roomCode).player.length) return;
             userDataMap.set(user.guestCode, {
                 ...userDataMap.get(user.guestCode),
@@ -174,19 +162,16 @@ io.on('connection', (socket) => {
                 text: `${user.nickname} 님이 게임에 입장했습니다.`,
             });
         } catch (e) {
-            console.log('socket.lobby_joinRoom ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> lobby_joinRoom >> guestCode: ${user.guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # in game - change player's state (ready, waiting)
     socket.on('game_changeState', ({ roomCode, guestCode }, callback) => {
         try {
-            if (userDataMap.has(guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, guestCode);
             const nextPlayerArr = roomDataMap.get(roomCode).player;
             nextPlayerArr.map((arr) => {
                 if (arr.guestCode === guestCode) {
@@ -213,19 +198,16 @@ io.on('connection', (socket) => {
                 io.to('lobby').emit('lobby_receiveGameList', convertMapToArray(roomDataMap));
             }
         } catch (e) {
-            console.log('socket.game_changeState ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> lobby_joinRoom >> guestCode: ${guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # in game - placing stone
     socket.on('game_placingStone', (objData, callback) => {
         try {
-            if (userDataMap.has(objData.guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, objData.guestCode);
             if (checkConflict(roomDataMap.get(objData.roomCode).tile, objData.objData)) {
                 callback('conflict');
             } else if (checkRuleViolation(roomDataMap.get(objData.roomCode).tile, objData.objData)) {
@@ -273,19 +255,16 @@ io.on('connection', (socket) => {
                 io.to('lobby').emit('lobby_receiveGameList', convertMapToArray(roomDataMap));
             }
         } catch (e) {
-            console.log('socket.game_placingStone ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> game_placingStone >> guestCode: ${objData.guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # in game - leave game
     socket.on('game_leaveGame', ({ guestCode, roomCode }, callback) => {
         try {
-            if (userDataMap.has(guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, guestCode);
             if (roomDataMap.has(roomCode)) {
                 // in case of user is host, kick all player in room and remove room
                 if (roomDataMap.get(roomCode).host.guestCode === guestCode) {
@@ -324,37 +303,31 @@ io.on('connection', (socket) => {
             });
             socket.leave(roomCode);
         } catch (e) {
-            console.log('socket.game_leaveGame ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> game_leaveGame >> guestCode: ${guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # in game - send message at room
     socket.on('game_sendMessage', ({ roomCode, user, message }, callback) => {
         try {
-            if (userDataMap.has(user.guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, user.guestCode);
             io.to(roomCode).emit('game_receiveMessage', {
                 type: 'user',
                 text: `${user.nickname} : ${message}`,
             });
         } catch (e) {
-            console.log('socket.game_sendMessage ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> game_sendMessage >> guestCode: ${user.guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # in game - surrender
     socket.on('game_surrender', ({ guestCode, roomCode }, callback) => {
         try {
-            if (userDataMap.has(guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, guestCode);
             const nextPlayerArr = roomDataMap.get(roomCode).player;
             nextPlayerArr.map((arr) => {
                 arr.state = 'waiting';
@@ -373,37 +346,31 @@ io.on('connection', (socket) => {
                 text: `${userDataMap.get(guestCode).nickname} 님이 기권했습니다.`,
             });
         } catch (e) {
-            console.log('socket.game_surrender ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> game_surrender >> guestCode: ${guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # in game - send emoji
     socket.on('game_sendEmoji', ({ roomCode, position, emoji, guestCode }, callback) => {
         try {
-            if (userDataMap.has(guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, guestCode);
             io.to(roomCode).emit('game_receiveEmoji', {
                 position: position,
                 emoji: emoji,
             });
         } catch (e) {
-            console.log('socket.game_sendEmoji ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> game_sendEmoji >> guestCode: ${guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # in game - request swap position
     socket.on('game_requestSwap', ({ roomCode, myPosition, targetPosition, guestCode }, callback) => {
         try {
-            if (userDataMap.has(guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, guestCode);
             if (roomDataMap.get(roomCode).player[myPosition].swap === 'true' || roomDataMap.get(roomCode).player[targetPosition].swap === 'true') {
                 return;
             }
@@ -424,19 +391,16 @@ io.on('connection', (socket) => {
                 recipient: targetPosition,
             });
         } catch (e) {
-            console.log('socket.game_requestSwap ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> game_requestSwap >> guestCode: ${guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 
     // # in game - response swap
     socket.on('game_responseSwap', ({ roomCode, type, sender, recipient, guestCode }, callback) => {
         try {
-            if (userDataMap.has(guestCode) === false) {
-                callback('disconnected');
-                return;
-            }
+            checkUserConnection(userDataMap, guestCode);
             if (roomDataMap.has(roomCode) === false) {
                 return;
             }
@@ -475,9 +439,9 @@ io.on('connection', (socket) => {
                 io.to(roomCode).emit('game_rejectSwap', roomDataMap.get(roomCode));
             }
         } catch (e) {
-            console.log('socket.game_responseSwap ERROR >>');
-            console.log(e);
-            callback('bad request');
+            console.log(`ERROR> game_responseSwap >> guestCode: ${guestCode}\n${e}`);
+            if (e.message === 'disconnected') callback('disconnected');
+            else callback('bad request');
         }
     });
 

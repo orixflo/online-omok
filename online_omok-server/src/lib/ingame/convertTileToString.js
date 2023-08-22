@@ -10,6 +10,16 @@ const convertTileToString = (tile) => {
     for (let i = 0; i < tile.length; i++) {
         converted = replaceChar(converted, parseInt(tile[i].split(',')[0]) + parseInt(tile[i].split(',')[1]) * 19, tile[i].split(',')[2]);
     }
+    // showing prev stone
+    const lastIndex = tile.length - 1
+    let stoneColor = '';
+    if (tile[lastIndex].split(',')[2] === 'B') stoneColor = 'b';
+    else stoneColor = 'w'
+    converted = replaceChar(
+        converted,
+        parseInt(tile[lastIndex].split(',')[0]) + parseInt(tile[lastIndex].split(',')[1]) * 19,
+        stoneColor,
+    );
     return converted;
 };
 
