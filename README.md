@@ -6,6 +6,9 @@
 
 **2인 팀으로 즐기는 3-3 금수, 장목 착수 가능의 일반 롤 오목 게임입니다.**
 
+## Update
+23/08/22 이전 돌 위치 표시기능 추가
+
 ## C**lient**
 
 **react  ·  redux  ·  redux-saga  ·  styled-components**
