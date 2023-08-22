@@ -33,19 +33,31 @@ const Cross = styled.div`
     }
 `;
 
+const PrevStoneDot = styled.div`
+    position: absolute;
+    z-index: 4;
+    width: 25%;
+    height: 25%;
+    border-radius: 50%;
+    background: red;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+`;
+
 const ActivedCheckBox = styled.div`
     width: 100%;
     height: 100%;
     z-index: 3;
     position: absolute;
     ${(props) =>
-        props.obj === 'B' &&
+        (props.stone === 'B' || props.stone === 'b') &&
         `
             background-image: url(${stoneBlack});
             background-size: cover;
         `};
     ${(props) =>
-        props.obj === 'W' &&
+        (props.stone === 'W' || props.stone === 'w') &&
         `
             background-image: url(${stoneWhite});
             background-size: cover;
@@ -53,8 +65,8 @@ const ActivedCheckBox = styled.div`
 
     &:hover {
         border-radius: 50%;
-        ${(props) => props.obj === 'R' && props.turn === 'true' && `background: rgba(254, 0, 0, 0.7);`}
-        ${(props) => props.obj === 'N' && props.turn === 'true' && `background: rgba(0, 177, 0, 0.7);`}
+        ${(props) => props.stone === 'R' && props.turn === 'true' && `background: rgba(254, 0, 0, 0.7);`}
+        ${(props) => props.stone === 'N' && props.turn === 'true' && `background: rgba(0, 177, 0, 0.7);`}
     }
 `;
 
@@ -62,10 +74,13 @@ const CheckBox = ({ placingStone, objData, stone, turn }) => {
     const setObject = () => {
         if (turn === 'true') placingStone(objData);
     };
+    let prevStone = false;
+    if (stone === 'b' || stone === 'w') prevStone = true;
 
     return (
         <CheckBoxWrapper>
-            <ActivedCheckBox onClick={setObject} obj={stone} turn={turn}></ActivedCheckBox>
+            {prevStone && <PrevStoneDot />}
+            <ActivedCheckBox onClick={setObject} stone={stone} turn={turn}></ActivedCheckBox>
             <Cross>
                 <div className="state1" />
                 <div className="lineX" />
