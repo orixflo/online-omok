@@ -85,6 +85,7 @@ const ReceiveChat = ({ chatArr }) => {
         chatArr.map((chat, index) =>
             chat.type === 'system' ? <SystemMessage key={index}>{chat.text}</SystemMessage> : <Message key={index}>{chat.text}</Message>,
         );
+    // console.log('receive chat render');
 
     useEffect(() => {
         scrollRef.current.scrollIntoView();

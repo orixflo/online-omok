@@ -19,6 +19,7 @@ const SendChat = ({ sendMessage, onChange, value }) => {
             sendMessage();
         }
     };
+    // console.log('send chat render');
 
     return (
         <SendChatWrapper>
