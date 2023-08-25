@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import socket from '../../lib/api/socket';
 import Lobby from '../../components/lobby/Lobby';
@@ -62,11 +62,11 @@ const LobbyContainer = () => {
         };
     }, []);
 
-    const onChange = (e) => {
+    const onChange = useCallback((e) => {
         dispatch(changeInput(e.target.value));
-    };
+    }, []);
 
-    const sendMessage = () => {
+    const sendMessage = useCallback(() => {
         socket.emit('lobby_sendMessage', { user: user, message: chat.input }, (error) => {
             if (error) {
                 setErr(error);
@@ -74,7 +74,7 @@ const LobbyContainer = () => {
             }
         });
         dispatch(changeInput(''));
-    };
+    }, []);
 
     const changeOpiont = (value) => {
         dispatch(setHostData({ key: 'mode', value: value }));
