@@ -11,6 +11,7 @@ const CheckBoxWrapper = styled.div`
 `;
 
 const Cross = styled.div`
+    z-index: 2;
     .lineX {
         width: 100%;
         height: 2px;
@@ -45,7 +46,7 @@ const PrevStoneDot = styled.div`
     transform: translate(-50%, -50%);
 `;
 
-const ActivedCheckBox = styled.div`
+const Stone = styled.div`
     width: 100%;
     height: 100%;
     z-index: 3;
@@ -62,32 +63,55 @@ const ActivedCheckBox = styled.div`
             background-image: url(${stoneWhite});
             background-size: cover;
         `};
+`;
+
+const Empty = styled.div`
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    position: absolute;
+    border-radius: 50%;
 
     &:hover {
-        border-radius: 50%;
-        ${(props) => props.stone === 'R' && props.turn === 'true' && `background: rgba(254, 0, 0, 0.7);`}
-        ${(props) => props.stone === 'N' && props.turn === 'true' && `background: rgba(0, 177, 0, 0.7);`}
+        background: rgb(0, 200, 0);
     }
 `;
 
-const CheckBox = ({ placingStone, objData, stone, turn }) => {
-    const setObject = () => {
-        if (turn === 'true') placingStone(objData);
-    };
+const CheckBox = ({ stone, objData, placingStone }) => {
+    // console.log('checkbox render');
     let prevStone = false;
-    if (stone === 'b' || stone === 'w') prevStone = true;
+    if (stone === 'b' || stone === 'w') {
+        prevStone = true;
+    }
 
-    return (
-        <CheckBoxWrapper>
-            {prevStone && <PrevStoneDot />}
-            <ActivedCheckBox onClick={setObject} stone={stone} turn={turn}></ActivedCheckBox>
-            <Cross>
-                <div className="state1" />
-                <div className="lineX" />
-                <div className="lineY" />
-            </Cross>
-        </CheckBoxWrapper>
-    );
+    if (stone === 'N') {
+        return (
+            <CheckBoxWrapper
+                onClick={() => {
+                    placingStone(objData);
+                }}
+            >
+                <Empty />
+                <Cross>
+                    <div className="state1" />
+                    <div className="lineX" />
+                    <div className="lineY" />
+                </Cross>
+            </CheckBoxWrapper>
+        );
+    } else {
+        return (
+            <CheckBoxWrapper>
+                {prevStone && <PrevStoneDot />}
+                <Stone stone={stone}></Stone>
+                <Cross>
+                    <div className="state1" />
+                    <div className="lineX" />
+                    <div className="lineY" />
+                </Cross>
+            </CheckBoxWrapper>
+        );
+    }
 };
 
 export default React.memo(CheckBox);

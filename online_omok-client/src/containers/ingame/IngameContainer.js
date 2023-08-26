@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import socket from '../../lib/api/socket';
 import InGame from '../../components/ingame/InGame';
@@ -126,7 +126,7 @@ const IngameContainer = () => {
         });
     };
 
-    const placingStone = (objData) => {
+    const placingStone = useCallback((objData) => {
         setAnimationtype('');
         socket.emit('game_placingStone', { roomCode: game.roomCode, objData: objData, guestCode: user.guestCode }, (error) => {
             if (error === 'ruleViolation') {
@@ -138,7 +138,7 @@ const IngameContainer = () => {
                 console.log(error);
             }
         });
-    };
+    }, []);
 
     const changeChatInput = (e) => {
         dispatch(changeInput(e.target.value));

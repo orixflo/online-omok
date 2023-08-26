@@ -10,16 +10,24 @@ const CheckerBoardWrapper = styled.div`
     grid-template-rows: repeat(19, 1fr);
 `;
 
+const ClickBlocking = styled.div`
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 0, 0, 0);
+    z-index: 5;
+`;
+
 const CheckerBoard = ({ placingStone, tile, position, turn }) => {
-    const [myStone, setMyStone] = useState('');
+    const [myStoneColor, setMyStoneColor] = useState('');
 
     useEffect(() => {
         if (position === 0 || position === 2) {
-            setMyStone('B');
+            setMyStoneColor('B');
         } else {
-            setMyStone('W');
+            setMyStoneColor('W');
         }
-    }, []);
+    }, [position]);
 
     // split tile string received from server into character
     // and rendering each character as checkbox
@@ -29,14 +37,17 @@ const CheckerBoard = ({ placingStone, tile, position, turn }) => {
     let index = 0;
     for (let i = 0; i < 19; i++) {
         for (let j = 0; j < 19; j++) {
-            cbArr.push(
-                <CheckBox key={`${i}_${j}`} objData={`${j},${i},${myStone}`} placingStone={placingStone} stone={tile.charAt(index)} turn={turn}></CheckBox>,
-            );
+            cbArr.push(<CheckBox key={`${i}_${j}`} stone={tile.charAt(index)} objData={`${j},${i},${myStoneColor}`} placingStone={placingStone}></CheckBox>);
             index += 1;
         }
     }
 
-    return <CheckerBoardWrapper>{cbArr}</CheckerBoardWrapper>;
+    return (
+    <CheckerBoardWrapper>
+        {turn === 'false' && <ClickBlocking />}
+        {cbArr}
+    </CheckerBoardWrapper>
+    );
 };
 
 export default React.memo(CheckerBoard);
