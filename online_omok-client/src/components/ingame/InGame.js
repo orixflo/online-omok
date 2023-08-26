@@ -9,6 +9,8 @@ import SendChat from '../lobby/SendChat';
 import GameSummary from './GameSummary';
 import Alert from '../common/Alert';
 import RequestSwapForm from './RequestSwapForm';
+import { useSetPlayer } from '../../customHooks/useSetPlayer';
+import { useSetEmoji } from '../../customHooks/useSetEmoji';
 
 const InGameWrapper = styled.div`
     font-family: 'DungGeunMo';
@@ -84,13 +86,8 @@ const Content = styled.div`
 
 const InGame = ({ game, chat, placingStone, summary, ingameFn, swapForm, swapSenderName, alertType, animationtype, error, surrenderForm }) => {
     const [panel, setPanel] = useState({ topPanel: '', bottomPanel: '' });
-    const [emoji, setEmoji] = useState([]);
-    const [playerSlot, setPlayerSlot] = useState([
-        { name: '---', active: 'true' },
-        { name: '---', active: 'true' },
-        { name: '---', active: 'true' },
-        { name: '---', active: 'true' },
-    ]);
+    const emoji = useSetEmoji(game, chat);
+    const playerSlot = useSetPlayer(game);
 
     useEffect(() => {
         if (game.position === 0 || game.position === 2) {
@@ -99,45 +96,6 @@ const InGame = ({ game, chat, placingStone, summary, ingameFn, swapForm, swapSen
             setPanel({ topPanel: 'black', bottomPanel: 'white' });
         }
     }, [game]);
-
-    useEffect(() => {
-        const newArr = [];
-        let pointer = game.position;
-        for (let i = 0; i < game.player.length; i++) {
-            if (game.roomState === 'ingame') {
-                newArr.push({
-                    name: game.player[pointer].nickname,
-                    active: game.player[pointer].guestCode === game.player[game.turn].guestCode ? 'true' : 'false',
-                });
-            } else {
-                newArr.push({ name: game.player[pointer].nickname, active: game.player[pointer].state === 'ready' ? 'true' : 'false' });
-            }
-            pointer += 1;
-            if (pointer > game.player.length - 1) pointer = 0;
-        }
-        if (newArr.length < game.maxPlayer) {
-            for (let i = newArr.length; i < game.maxPlayer; i++) {
-                newArr.push({ name: '---', active: 'false' });
-            }
-        }
-        setPlayerSlot(newArr);
-    }, [game]);
-
-    useEffect(() => {
-        const newArr = [];
-        let pointer = game.position;
-        for (let i = 0; i < game.player.length; i++) {
-            newArr.push(chat.emojiArr[pointer]);
-            pointer += 1;
-            if (pointer > game.player.length - 1) pointer = 0;
-        }
-        if (newArr.length < game.maxPlayer) {
-            for (let i = newArr.length; i < game.maxPlayer; i++) {
-                newArr.push('-');
-            }
-        }
-        setEmoji(newArr);
-    }, [chat.emojiArr]);
 
     return (
         <InGameWrapper>
