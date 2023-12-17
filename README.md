@@ -1,40 +1,45 @@
 # Online-omok
+![게임.png](https://github.com/orixflo/online-omok/blob/master/_git_images/game.png)</br>
+온라인 팀전 오목 게임.
+## Skills
+### Client
+React · Redux · Redux-saga · Styled-components
+### Server
+Node.js · Koa · Socker.io
 
----
-
-![게임.png](https://github.com/orixflo/online-omok/blob/master/_git_images/game.png)
-
-**2인 팀으로 즐기는 3-3 금수, 장목 착수 가능의 일반 롤 오목 게임입니다.**
-
-## Update
-23/08/22 이전 돌 위치 표시기능 추가
-
-## C**lient**
-
-**react  ·  redux  ·  redux-saga  ·  styled-components**
-
-## **Server**
-
-**node.js  ·  koa  ·  socker.io**
-
-## Features
-
+## Running project
+클라이언트, 서버 각각에 모듈 설치
+```plaintext
+cd ./online_omok-client  (and)  cd ./online_omok-server
+yarn install
+```
+프로젝트 실행
+```plaintext
+yarn start
+```
+플레이
+```plaintext
+localhost:3000
+```
 ### Login
-
-사용자는 3 ~ 15 개의 한글 / 영어 / 숫자를 입력하여 로그인할 수 있습니다.
-
-로그인을 하면 서버에서 식별 코드를 생성하여 전달받습니다.
-
+* 3 ~ 15 개의 한글 / 영어 / 숫자를 입력하여 로그인
 ### Lobby
-
-  로비에서 사용자는 다른 사용자들과 메시지를 주고받을 수 있고, 대기실 탭에서 생성된 방에 참가할 수 있습니다.
-
-방만들기 탭에서 사용자는 “일반게임” 과 “협동게임 (2대2)” 게임을 생성할 수 있습니다.
-
-### In Game
-
-  게임 방에 접속하여 대기중 일 때, 사용자는 방에 참가한 다른 사용자와 메시지와 이모지를 주고 받을 수 있습니다. 그리고, 사용자의 상태를 준비 상태로 전환하거나 다른 플레이어와 자리를 교체할 수 있습니다.
-
-  게임 중 일 때 사용자 닉네임의 배경색을 통해 사용자의 턴을 표시합니다. 그리고, 이모지를 주고받거나, 기권할 수 있습니다.
-
-게임의 승패가 결정되면 승패 여부와 게임의 마지막 상태가 표시됩니다.
+* 채팅
+* 목록에서 게임 입장
+* 게임 생성
+  * 게임 모드 선택 (일반, 팀전)
+### Room
+* 플레이어 상태 변경
+  * 대기중 / 준비 상태 변경
+* 자리 교체
+  * 다른 플레이어에게 자리 교체 요청 발신
+  * 수신된 자리 교체 요청에 응답
+* 채팅
+* 감정표현
+### In game
+* 돌 놓기
+  * 이전에 놓인 돌 위치 표시
+  * 룰에 의해 불가능한 자리 피드백
+* 감정표현
+* 기권
+* 게임 종료시 승패 정보 표시
