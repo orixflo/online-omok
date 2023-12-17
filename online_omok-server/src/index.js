@@ -8,7 +8,7 @@ const server = require('koa-static');
 const path = require('path');
 const send = require('koa-send');
 
-const { PORT } = process.env;
+const PORT = 4000;
 
 const app = new Koa();
 const router = new Router();
@@ -27,7 +27,7 @@ app.use(async ctx => {
 })
 
 app.listen(PORT, () => {
-    console.log('Listening to port %d', PORT)
+    console.log(`Listening to port ${PORT}`);
 });
 
 require('./globalData');
