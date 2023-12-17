@@ -13,7 +13,7 @@ Node.js · Koa · Socker.io
 cd ./online_omok-client  (and)  cd ./online_omok-server
 yarn install
 ```
-프로젝트 실행
+클라이언트, 서버에서 각각 프로젝트 실행
 ```plaintext
 yarn start
 ```
